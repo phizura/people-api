@@ -5,6 +5,7 @@ import {
   createConnection,
   updateConnection,
   deleteContact,
+  create
 } from "./functions.js";
 
 const router = express.Router();
@@ -32,18 +33,46 @@ router.get("/contact/:id", async (req, res) => {
   }
 });
 
-router.post("/add-contact", async (req, res) => {
-  try {
-    await createConnection(req.body);
-    res.status(201).send({ message: "Success Add Contact" });
-  } catch (error) {
-    if (error.message === "Number already exists") {
-      res.status(409).send({ message: error.message });
-    } else {
-      res.status(500).send({ message: error.message });
-    }
-  }
-});
+// router.post("/add-contact", async (req, res) => {
+//   try {
+//     await createConnection(req.body);
+//     res.status(201).send({ message: "Success Add Contact" });
+//   } catch (error) {
+//     if (error.message === "Number already exists") {
+//       res.status(409).send({ message: error.message });
+//     } else {
+//       res.status(500).send({ message: error.message });
+//     }
+//   }
+// });
+
+// router.post("/add-contact", async (req, res) => {
+//   try {
+//     const result = await createConnection(req.body);
+//     console.log(result);
+//     if(result.message === 409){
+//       res.status(409).send({ message: "Number already exists" });
+//     }
+//     res.status(201).send({ message: "Success Add Contact" });
+//   } catch (error) {
+//     console.log(error);
+//     if (error.message === "Number already exists") {
+//       res.status(409).send({
+//         message: error.message,
+//         code: "CONTACT_ALREADY_EXISTS",
+//         description: "The phone number is already associated with an existing contact."
+//       });
+//     } else {
+//       res.status(500).send({
+//         message: error.message,
+//         code: "INTERNAL_SERVER_ERROR",
+//         description: "An unexpected error occurred. Please try again later."
+//       });
+//     }
+//   }
+// });
+
+router.post('/add-contact', create)
 
 router.post("/update-contact", async (req, res) => {
   try {

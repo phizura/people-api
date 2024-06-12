@@ -48,21 +48,79 @@ export async function createConnection(data) {
   const { name, email = "", phoneNumber } = data;
   const formattedPhoneNumber = phoneNumberFormater(phoneNumber);
 
+  // try {
+  //   const auth = await authorize();
+  //   const service = google.people({ version: "v1", auth });
+  //   const contacts = await listConnectionNames();
+
+  //   // const contact = contacts.find((contact) => {
+  //   //   return contact.phoneNumbers[0].value === formattedPhoneNumber;
+  //   // });
+
+  //   const contact = contacts
+  //   .filter(contact => contact.phoneNumbers)
+  //   .flatMap(contact => contact.phoneNumbers)
+  //   .find(phoneNumber => phoneNumberFormater(phoneNumber.value) == formattedPhoneNumber);
+
+  //   if (contact) throw new Error("Number already exists");
+
+  //   await service.people.createContact({
+  //     requestBody: {
+  //       phoneNumbers: [{ value: formattedPhoneNumber }],
+  //       names: [{ givenName: name }],
+  //       emailAddresses: [{ value: email }],
+  //     },
+  //   });
+
+  //   return "Success add contact";
+  // } catch (err) {
+  //   throw new Error(err.message || "Internal Server Error");
+  // }
+
+  // try {
+  //   const auth = await authorize();
+  //   const service = google.people({ version: "v1", auth });
+  //   const contacts = await listConnectionNames();
+
+  //   const contact = contacts
+  //  .filter(contact => contact.phoneNumbers)
+  //  .flatMap(contact => contact.phoneNumbers)
+  //  .find(phoneNumber => phoneNumberFormater(phoneNumber.value) == formattedPhoneNumber);
+
+  //   if (contact) throw new Error(409);
+
+  //   await service.people.createContact({
+  //     requestBody: {
+  //       phoneNumbers: [{ value: formattedPhoneNumber }],
+  //       names: [{ givenName: name }],
+  //       emailAddresses: [{ value: email }],
+  //     },
+  //   });
+
+  //   return "Success add contact";
+  // }catch (err) {
+  //   // console.error(err.message);
+  //   return { error: "Failed to create contact", message: err.message };
+  // }
+}
+
+export const create = async(req, res) => {
   try {
+    const { name, email = "", phoneNumber } = req.body;
+    const formattedPhoneNumber = phoneNumberFormater(phoneNumber);
+
     const auth = await authorize();
     const service = google.people({ version: "v1", auth });
     const contacts = await listConnectionNames();
-
-    // const contact = contacts.find((contact) => {
-    //   return contact.phoneNumbers[0].value === formattedPhoneNumber;
-    // });
 
     const contact = contacts
     .filter(contact => contact.phoneNumbers)
     .flatMap(contact => contact.phoneNumbers)
     .find(phoneNumber => phoneNumberFormater(phoneNumber.value) == formattedPhoneNumber);
 
-    if (contact) throw new Error("Number already exists");
+    if (contact) {
+      return res.status(409).json({ error: 'Number already exists' });
+    }
 
     await service.people.createContact({
       requestBody: {
@@ -72,9 +130,13 @@ export async function createConnection(data) {
       },
     });
 
-    return "Success add contact";
-  } catch (err) {
-    throw new Error(err.message || "Internal Server Error");
+    res.status(200).json({
+      'message': 'Success add contact'
+    });
+
+  } catch (error) {
+    console.Error(error.message);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 }
 
