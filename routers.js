@@ -78,7 +78,7 @@ router.post("/update-contact", async (req, res) => {
   } catch (error) {
     // console.log(error);
     if (error.message === "Contact not found") {
-      res.status(404).send({ message: error.message });
+      res.status(409).send({ message: error.message });
     } else {
       res.status(500).send({ message: error.message });
     }
