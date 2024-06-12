@@ -5,7 +5,6 @@ import {
   createConnection,
   updateConnection,
   deleteContact,
-  create
 } from "./functions.js";
 
 const router = express.Router();
@@ -33,20 +32,18 @@ router.get("/contact/:id", async (req, res) => {
   }
 });
 
-// router.post("/add-contact", async (req, res) => {
-//   try {
-//     await createConnection(req.body);
-//     res.status(201).send({ message: "Success Add Contact" });
-//   } catch (error) {
-//     if (error.message === "Number already exists") {
-//       res.status(409).send({ message: error.message });
-//     } else {
-//       res.status(500).send({ message: error.message });
-//     }
-//   }
-// });
-
-// router.post("/add-contact", async (req, res) => {
+router.post("/add-contact", async (req, res) => {
+  try {
+    await createConnection(req.body);
+    res.status(201).send({ message: "Success Add Contact" });
+  } catch (error) {
+    if (error.message === "Number already exists") {
+      res.status(409).send({ message: error.message });
+    } else {
+      res.status(500).send({ message: error.message });
+    }
+  }
+});
 //   try {
 //     const result = await createConnection(req.body);
 //     console.log(result);
@@ -72,15 +69,16 @@ router.get("/contact/:id", async (req, res) => {
 //   }
 // });
 
-router.post('/add-contact', create)
+// router.post("/add-contact", create);
 
 router.post("/update-contact", async (req, res) => {
   try {
     await updateConnection(req.body);
     res.status(201).send({ message: "Success Update Contact" });
   } catch (error) {
-    if (error.message === "Number already exists") {
-      res.status(409).send({ message: error.message });
+    // console.log(error);
+    if (error.message === "Contact not found") {
+      res.status(404).send({ message: error.message });
     } else {
       res.status(500).send({ message: error.message });
     }
