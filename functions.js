@@ -53,9 +53,14 @@ export async function createConnection(data) {
     const service = google.people({ version: "v1", auth });
     const contacts = await listConnectionNames();
 
-    const contact = contacts.find((contact) => {
-      return contact.phoneNumbers[0].value === formattedPhoneNumber;
-    });
+    // const contact = contacts.find((contact) => {
+    //   return contact.phoneNumbers[0].value === formattedPhoneNumber;
+    // });
+
+    const contact = contacts
+    .filter(contact => contact.phoneNumbers)
+    .flatMap(contact => contact.phoneNumbers)
+    .find(phoneNumber => phoneNumberFormater(phoneNumber.value) == formattedPhoneNumber);
 
     if (contact) throw new Error("Number already exists");
 
