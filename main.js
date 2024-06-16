@@ -1,5 +1,6 @@
 import express from "express";
 import router from "./routes/contact.routes.js";
+import authRoute from "./routes/auth.routes.js";
 import cors from "cors";
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use("/api", router);
+app.use("/api/auth", authRoute);
 
 app.listen(PORT, () => {
   console.log(`server running on port ${PORT}`)
