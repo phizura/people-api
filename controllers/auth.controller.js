@@ -55,7 +55,8 @@ async function saveCredentials(client) {
 export const authorize = async (req, res) => {
   let client = await loadSavedCredentialsIfExist();
   if (client) {
-    res.status(200).json('Authenticated successfully');
+    return client;
+    // res.json(client);
   }
   client = await authenticate({
     scopes: SCOPES,
@@ -64,5 +65,5 @@ export const authorize = async (req, res) => {
   if (client.credentials) {
     await saveCredentials(client);
   }
-  res.status(200).json('Authenticated successfully');
+  return client;
 }

@@ -1,6 +1,7 @@
 import express from "express";
 import router from "./routes/contact.routes.js";
 import authRoute from "./routes/auth.routes.js";
+import authProtect from "./middleware/authProtect.js";
 import cors from "cors";
 
 const app = express();
@@ -17,7 +18,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-app.use("/api", router);
+app.use("/api/contacts", authProtect, router);
 app.use("/api/auth", authRoute);
 
 app.listen(PORT, () => {
