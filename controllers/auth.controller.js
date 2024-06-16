@@ -3,14 +3,15 @@ import path from "path";
 import process from "process";
 import { authenticate } from "@google-cloud/local-auth";
 import { google } from "googleapis";
+import config from "../config/index.js";
 
 // If modifying these scopes, delete token.json.
-const SCOPES = ["https://www.googleapis.com/auth/contacts"];
+const SCOPES = [config.scope.url];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
-const TOKEN_PATH = path.join(process.cwd(), "./json/token.json");
-const CREDENTIALS_PATH = path.join(process.cwd(), "./json/credentials.json");
+const TOKEN_PATH = path.join(process.cwd(), config.auth.token);
+const CREDENTIALS_PATH = path.join(process.cwd(), config.auth.credentials);
 
 /**
  * Reads previously authorized credentials from the save file.
@@ -50,10 +51,11 @@ async function saveCredentials(client) {
  * Load or request or authorization to call APIs.
  *
  */
-export default async function authorize() {
+// export default async function authorize() {
+export const authorize = async (req, res) => {
   let client = await loadSavedCredentialsIfExist();
   if (client) {
-    return client;
+    res.status(200).json('Authenticated successfully');
   }
   client = await authenticate({
     scopes: SCOPES,
@@ -62,10 +64,5 @@ export default async function authorize() {
   if (client.credentials) {
     await saveCredentials(client);
   }
-  return client;
+  res.status(200).json('Authenticated successfully');
 }
-
-
-
-
-// authorize().then(listConnectionNames).catch(console.error);

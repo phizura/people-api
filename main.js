@@ -1,23 +1,23 @@
 import express from "express";
-import router from "./routers.js";
+import router from "./routes/contact.routes.js";
 import cors from "cors";
-import authorize from "./services.js";
 
 const app = express();
-const port = 5551;
+const PORT = process.env.PORT || 5551;
 
-app.use(cors());
+const corsOptions = {
+  origin: '*',
+  methods: 'GET,HEAD,PUT,POST',
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  credentials: true
+}
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
-app.use((req, res, next) => {
-  authorize().then(next()).catch(console.error);
-});
 app.use("/api", router);
 
-app.get("/", (req, res) => {
-  res.send("hello world");
-});
-
-app.listen(port, () => {
-  console.log(`Your app is running on http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`server running on port ${PORT}`)
 });
